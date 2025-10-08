@@ -69,7 +69,7 @@ c nsoil     : Number of soil nodes
      & 'icalcstep =',icalcstep !RJ12/17 was prnt_hour,REJ_2025/08/17+icalcstep
       if(iprnthour)write(20,*)'Followng variabls, excpt for T, are *1/2'  ! RJ12/17
       if(iprnthour)write(20,*)  ! RJ12/17
-     & '  node      bbo       hfluxt      hfluxb     dsol     qk      T'   
+     &'  node      bbo       hfluxt      hfluxb     dsol     qk      T'   
 
 c  Top node
       heatfluxb = qk(n)*(t(n)-t(n-1))+qf(n)*t(n)
@@ -78,12 +78,12 @@ c      write(*,*)'heatfluxbtop',heatfluxbtop,'qk(n),t(n),t(n-1)',
 c     &      qk(n),t(n),t(n-1),'topflux',topflux
       heatfluxt = topflux !REJ_2025/08/18
       bb(n) = topflux-heatfluxb +.5*dsol(n)
-C     if(icalcstep .ge. 550)then !REJ_2025/09/04.  block added
-C      write(iunit,*)
-C    &  '3. FBB topflux  heatfluxbtop  0.5*dsol(n)   bb(n)   bbo(n)'
-C      write(iunit,5)topflux,heatfluxbtop,.5d0*dsol(n),bb(n),bbo(n)         
-C5      format(5x,5f11.4)
-C     endif
+      if(icalcstep .ge. 550)then !REJ_2025/09/04.  block added
+       write(iunit,*)
+     &  '3. FBB topflux  heatfluxbtop  0.5*dsol(n)   bb(n)   bbo(n)'
+       write(iunit,5)topflux,heatfluxbtop,.5d0*dsol(n),bb(n),bbo(n)         
+5      format(5x,5f11.4)
+      endif
       if(iprnthour)call TestFbb(n,bb,heatfluxt,heatfluxb,  ! RJ12/17 was prnt_hour
      &   topflux,botflux,dsol,qk,T,1)
 
@@ -124,7 +124,7 @@ c***********************************************************************
      &   botflux,dsol,qk,T,ipassin)
 c***********************************************************************
       include 'const'
-      integer j,ipassin
+      integer j
       double precision bb(nd),heatfluxt,heatfluxb,topflux,botflux,
      &  dsol(nd),qk(nd),T(nd)
 5      format(i5,7f12.6) 

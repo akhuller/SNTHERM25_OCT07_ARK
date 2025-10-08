@@ -75,7 +75,7 @@ c
       dzc=dz+dz2
       dmassc=dmass+dmass2
       bwc=dmassc/dzc  !REJ_2025/06/09 Replace with harmonic mean
-c      write(*,*)'iunit',iunit
+      write(*,*)'iunit',iunit
 c      write(*,*)'REG mean',bwc
 CTu      bwc = bw*bw2*(dz+dz2)/(bw*dz2 + bw2*dz)
 c      write(*,*)'HARMONIC mean',bwc

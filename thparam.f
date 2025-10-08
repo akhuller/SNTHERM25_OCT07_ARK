@@ -92,7 +92,7 @@ c reached.  Program stops after print-out completes.
       if(prnthour)write(69,*)'thparam_out'  
       if(prnthour)write(69,*)'jday =',jday,'  ihour =',ihour,'dt = ',dt
       if(prnthour)write(69,*)
-     & '  node      qs         bl          ct          f           dz' ! RJ12/17   
+     &'  node      qs         bl          ct          f           dz'!RJ12/17   
 cRJ12/16 bw to bl in above
 c-----------------EndOptional print-------------------------------------
 
@@ -149,15 +149,15 @@ c-----------------------------------------------------------------------
             goto 9999
 c Prints to converge_out. Compare these surface arrays with those in 
 c converge_out (iunit = 120).  They should be equal !REJ_2025/08/28
-C           if(icalcstep.gt.550 .and. i .eq.n)then
-C              write(iunit,*) '1. THPARAM'        
-C              write(iunit,6)
-C    &         '     n   step    dt           dz      ',
-C    &         'qs*dt          bt        ct f        dbvdt*Ls'
-C              write(iunit,6)n,icalcstep,dt,dz(i),qs(i)*dt,bt(i),ct(i),
-C    &            f(i), dbvdt(i)*dls
-Cc6              format(2i5,7f12.6)
-C            endif
+            if(icalcstep.gt.550 .and. i .eq.n)then
+               write(iunit,*) '1. THPARAM'        
+               write(iunit,6)
+     &         '     n   step    dt           dz      ',
+     &         'qs*dt          bt        ct f        dbvdt*Ls'
+               write(iunit,6)n,icalcstep,dt,dz(i),qs(i)*dt,bt(i),ct(i),
+     &            f(i), dbvdt(i)*dls
+c6              format(2i5,7f12.6)
+             endif
 9999  continue
 c-----------------------------------------------------------------------
 c REJ/08/28/2025 Next print superceded by above block
@@ -188,15 +188,15 @@ c Node is above freezing
 c-----------------------------------------------------------------------
 c Prints to converge_out. Compare these surface arrays with those in 
 c converge_out (iunit = 120).  They should be equal !REJ_2025/08/28
-C           if(icalcstep.gt.550 .and. i .eq.n)then
-C             write(iunit,*) '1. THPARAM'        
-C             write(iunit,*)
-C    &        '  n   step    dt           dz       qs*dt       bt',
-C    &        '      ct            f      dbvdt*Ls   Test      To '
-C              write(iunit,6)n,icalcstep,dt,dz(i),qs(i)*dt,bt(i),ct(i),
-C    &            f(i),dbvdt(i)*dls,T(i),To(i)
-C6              format(2i5,f10.3,f10.6,5f12.6,2f7.2)
-C            endif
+            if(icalcstep.gt.550 .and. i .eq.n)then
+              write(iunit,*) '1. THPARAM'        
+              write(iunit,*)
+     &        '  n   step    dt           dz       qs*dt       bt',
+     &        '      ct            f      dbvdt*Ls   Test      To '
+               write(iunit,6)n,icalcstep,dt,dz(i),qs(i)*dt,bt(i),ct(i),
+     &            f(i),dbvdt(i)*dls,T(i),To(i)
+6              format(2i5,f10.3,f10.6,5f12.6,2f7.2)
+             endif
 c-----------------------------------------------------------------------
 c        if(i.eq.n)qs(i)=qs(i)+ct(i)*uvapor(i)/2d0
          if(i.gt.1)qk(i)=thk(i)*thkm/(thk(i)*dzm+thkm*dz(i))

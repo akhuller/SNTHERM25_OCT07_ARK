@@ -1,6 +1,6 @@
 ***********************************************************************
 c Function FVAPRI calcluates water vapor pressure(mb) when rh is
-c defined relative to saturation over ice
+c defined relative to saturation over water
 c***********************************************************************
       double precision function fvapri(at,rh,e0)
 c %W% %G%

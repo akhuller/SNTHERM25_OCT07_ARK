@@ -133,7 +133,7 @@ c      nodes=2
       nodeh=nbot
       nodes=nbot
       ratio=0.0
-      print=.false.
+      print=.true.
       if(iter .le. 1) then
         h1rstwarn = .true.
         s1rstwarn = .true.
@@ -163,8 +163,8 @@ c          stop 'converge.f'
 c         endif
 c          if(i .eq. n .and. icalcstep .gt. 570)write(iunit,*)'convchk',
 c     &      convchk,icalcstep
-c         if(i .eq. n .and. icalcstep .gt. 560)write(iunit,*)'convchk',
-c     &     convchk
+         if(i .eq. n .and. icalcstep .gt. 560)write(iunit,*)'convchk',
+     &     convchk
 
          IF( convchk ) THEN
 c          Next checks temperature criteria
@@ -184,22 +184,25 @@ c**********************************************************************
 c----------------------------------------------------------------------
 c Print block for comparing surface arrays after thparam and within this
 c converge routine. Written to converge_out. Arrays should be equal.
-cT_RESTORE            if(i.eq.n.and. icalcstep .gt. 550) then 
-C           if(i.eq.n) then  !c_REMOVE
-C            write(iunit,*)'4. CONVERGE                       cxmass'
-C            write(iunit,6)n,icalcstep,dt,dz(i),cxmass,bt(i),ct(i),
-C    &            f(i),dbvdt(i)*dls,T(i),To(i)
-C6           format(2i5,f10.3,f10.6,5f12.6,2f7.2)
-C            write(iunit,*)'bb(n) = topfluxk+topfluxv*T(n)+dsol(n)',
-C    &       'topflux',topfluxk+topfluxv*T(n),'dsol',dsol(n),
-C    &       'bb(n)',bb(n),'bbo(n)', bbo(n)
-C            write(iunit,*)'dt,dto',dt,dto
-C            write(iunit,*)'errtemp2 = ',
-C    &           'dabs(dto*flux/cxmass-(T(i)-To(i)))'
-C            write(120,*)
-C    &       'errtemp,errtemp2,T(n)',errtemp,errtemp2,n,T(n),icalcstep
-C             write(120,*)
-C           endif
+cT_RESTORE            if(i.eq.n.and. icalcstep .gt. 550) then
+            IF(PRINT)THEN !REJ_2025/09/25
+c            stop 'converge'
+            if(i.eq.n) then  !c_REMOVE
+             write(iunit,*)'4. CONVERGE                       cxmass'
+             write(iunit,6)n,icalcstep,dt,dz(i),cxmass,bt(i),ct(i),
+     &            f(i),dbvdt(i)*dls,T(i),To(i)
+6           format(2i5,f10.3,f10.6,5f12.6,2f7.2)
+             write(iunit,*)'bb(n) = topfluxk+topfluxv*T(n)+dsol(n)',
+     &       'topflux',topfluxk+topfluxv*T(n),'dsol',dsol(n),
+     &       'bb(n)',bb(n),'bbo(n)', bbo(n)
+             write(iunit,*)'dt,dto',dt,dto
+             write(iunit,*)'errtemp2 = ',
+     &           'dabs(dto*flux/cxmass-(T(i)-To(i)))'
+             write(120,*)
+     &       'errtemp,errtemp2,T(n)',errtemp,errtemp2,n,T(n),icalcstep
+              write(120,*)
+            endif
+            ENDIF !REJ_2025/09/25
 c---------------------------------------------------------------------------
             if(errtemp.gt.errtempmax) then
                nodeh=i
@@ -226,7 +229,7 @@ c
       notmet=.false.
 c
       if( ok ) then
-C     if(icalcstep .gt. 550)write(iunit,*)'ok iunit',iunit
+c!REJ_2025/09/25      if(icalcstep .gt. 550)write(iunit,*)'ok iunit',iunit
 c  ok convergence : increment the good calculation counter, estimate
 c  the next time step, and keep going.
 c
@@ -243,15 +246,15 @@ c
 c       Try increasing the time step if the number of consecutive good
 c       calculations exceeds the minimum required.
          if(igood .ge. ngoodmin)then
-c            if(icalcstep .gt. 550)write(iunit,*)'igood',igood
+cREJ_2025/09/25            if(icalcstep .gt. 550)write(iunit,*)'igood',igood
 c March22, 1995            dt = dmin1( dabs(dto/ratio),1.5*dto,dtmax)
             dum=dt !dum
 c         write(*,*)'BEF: igood,ngoodmin,dt',igood,ngoodmin,dt  !remove
 c           REJ_2025 note: Next usually increases dt by 50%
             dt = dmin1( dabs(dto/ratio),1.5*dto,(1-iwet)*dtmax+
      &      iwet*dtssmax)
-C           if(icalcstep.gt.550)write(iunit,*)'dabs(dto/ratio),1.5*dto'
-C    &         ,dabs(dto/ratio),1.5*dto,'ratio',ratio
+cREJ_2025/09/25            if(icalcstep.gt.550)write(iunit,*)'dabs(dto/ratio),1.5*dto'
+cREJ_2025/09/25    &         ,dabs(dto/ratio),1.5*dto,'ratio',ratio
 CR     &      ,(1-iwet)*dtmax+iwet*dtssmax,dto  ! remove
             dt=dmax1(dt,1d-2)
 c November 13, 1996. Set minimum on qs for top node.  Increases accuracy
@@ -264,6 +267,12 @@ c Convergence criteria not met:
          igood=0
          repeat=.true.
          if(dto .le. dtmin+tolerance) notmet=.true.
+          if(notmet)then
+            write(iunit,*)'notmet at step',icalcstep,
+     &      'cv = ',i,'dto',dto
+             stop 'notmet'
+           endif
+          
       end if
 c
 c Convergence criteria not met at minimum time step. notify
@@ -276,8 +285,8 @@ c     optional block to check input variables for debug.
        if(icalcstep .ge. 999999)debug = .true.         
        IF(debug)THEN
 c        write(iunit,*)icalcstep,l,prcp,errtempmax,T(l),
-        write(iunit,*)'CNV.f:',icalcstep,l,prcp,errtempmax,T(l),
-     &  ct(l),dbvdt(l),bt(l),dmass(l),bb(l),bbo(l),us(l),ci(l),tprecip
+cREJ_2025/09/25        write(iunit,*)'CNV.f:',icalcstep,l,prcp,errtempmax,T(l),
+cREJ_2025/09/25     &  ct(l),dbvdt(l),bt(l),dmass(l),bb(l),bbo(l),us(l),ci(l),tprecip
 c     &  ,flfall,flo(l)
 CR         write(*,*)'step,dt,ertempmax,l',icalcstep,dt,errtempmax,
 CR     &      errtallowd,l,ok
@@ -285,7 +294,7 @@ CR     &      errtallowd,l,ok
 c      if(icalcstep .ge. 700)stop  'converge 700'  
 c***********************************************************************
       if(notmet)then
-c         stop 'hit notmet'
+         stop 'hit notmet'
          repeat=.false.
 cREJ_2025/09/04         dt=dtmin
          write(*,*)'dt',dt
@@ -330,13 +339,13 @@ c      write(*,*)
 c      if(dabs(dtsum).lt. 1d-8)stop 'BJ converge'
 c
       else
-c
+c                                                                                                                                                                                                                                                                                                                                                      
 c convergence criteria not met.
 c reduce time step and repeat calculation.
 c
       if(.not.hconverge) then
          dt=dmin1(dabs(0.67*dto*1.0/ratio),0.67*dto)
-c         write(iunit,*)'convergence not met. new dt',dt ! ARK_2025/09/26
+cREJ_2025/09/25         write(iunit,*)'convergence not met. new dt',dt
       else
          if(dabs(unbar(nodes)) .gt. 1d-9)then
            dt=dmin1(dtssmax,0.67*dto,porosity(nodes)/(4d0*dabs
@@ -350,8 +359,8 @@ c         write(iunit,*)'convergence not met. new dt',dt ! ARK_2025/09/26
 c
 c reset appropriate conditions
 c
-c       write(*,*)'WARNING: Reset is being called in CONVERGE' !REJ_2025/09/04 ! ARK_2025/09/26
-c       write(80,*)'WARNING: Reset is being called in CONVERGE' !REJ_2025/09/04 ! ARK_2025/09/26
+c       write(*,*)'WARNING: Reset is being called in CONVERGE' !REJ_2025/09/04
+c       write(80,*)'WARNING: Reset is being called in CONVERGE' !REJ_2025/09/04
 cR      stop 'calling reset in CONVERGE'
        call reset
 

@@ -133,8 +133,8 @@ c  vapor diffusion cannot occur within a water saturated element
 c
 c  Vapor flux across lower CV boundary
 c      do 20 i=nsoil+1,n
-c      do 20 i=n,1,-1 
-      do 20 i=n,2,-1 ! ARK_2025/09/25 Changed to 2 so we avoid df(0)
+c      do 20 i=n,1,-1
+       do 20 i=n,2,-1 !ARK_2025/09/25 Changed to 2 so we avoid df(0)
       if(df(i).le.0d0 .or. df(i-1).le.0d0 .or. ltype(k(i)).gt.1)then
      &    !RECHECK only for snow?
       uvapor(i)=0d0

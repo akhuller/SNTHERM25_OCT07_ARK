@@ -244,7 +244,7 @@ c      if(it .gt. 40)write(*,*)'Ht/L,zetat,y',Ht/L,zetat,y
       if(L .gt. 0d0 .and. y .gt. 0)zetal=zetat !Update lower bound
       if(L .gt. 0d0 .and. y .le. 0)zetah=zetat !Update upper bound
       if(dabs(y) .lt. 1d-2 .and. it .gt. 2) goto 50
-      if(it .gt. 100)then
+      if(it .gt. 50)then
         write(80,*) 'Convergence problem in QTURB.f'
         write(*,*) 'Convergence problem in QTURB.f'          
 c        stop 'line 240 Convergence problem in QTURB'

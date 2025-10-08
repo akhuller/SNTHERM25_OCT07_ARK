@@ -1,5 +1,5 @@
 c***********************************************************************
-      program snthermv2
+      program snthermv2ARK
 c      version sntherm24/sntherm24_June15  Updated to sntherm24_check3
 c     Sept 09, 2025 Version with new precip
 c***********************************************************************
@@ -93,7 +93,7 @@ c Local
       double precision meltflux,uosave,topflux,frvis,botdsol,botflux 
       double precision sum,timesum,Tkairsave,Total_Latent  !REJ_2025/01/22+06/05
       double precision bextnir,Totalmass,sum_vapor_dt,sum_delta_dz !REJ_2025/07/22 +08/27
-      double precision snow_threshold,mass1,mass2,SSA1,SSA2 ! ARK_2025/09/11
+      double precision snow_threshold,snow_dz_min,mass1,mass2,SSA1,SSA2 ! ARK_2025/09/11
       integer istart_eff,prev_iy ! ARK_2025/09/11
 
 c    Debug Option
@@ -122,7 +122,7 @@ c     Rename "MatLabSolar" with something more descriptive !REJ_2025/1/09
      &    thinnode,ICVPfixd,Neumann,prnt_hour,spinup !REJ2025/05/24
       logical writematlabflag,writefluxmatlabflag ! ARK 7/29/24
       logical writematlablastyearflag ! ARK 12/26/24  
-      logical usemeasuredbottomtemp ! ARK_2025/10/1
+      logical usemeasuredbottomtemp   ! ARK_2025/10/06
       character*160 dust_mie_dir, mie_dir, miefile
       character*160 filename,x1,fnm(nfiles),fname 
       character*160 spfilename
@@ -149,14 +149,13 @@ c*tt*tt*tt*tt*tt*tt*tt*tt*KCTURB_Declarations*tt*tt*tt*tt*tt*tt*tt*tt*tt
       double precision Ma,Mw,dqsat ! ARK_2025/09/19 Removed ustar
 c END KCTURB_Declarations
 c*tt*tt*tt*tt*tt*tt*tt*tt*KCTURB_Declarations*tt*tt*tt*tt*tt*tt*tt*tt*tt
-      integer n_original ! ARK_2025/09/26
 C***********************************************************************
 c    1b. Data statements
 C**********************************************************************
 c Data statements
       data ibasestep,ii,igood,ititle/4*0/ 
       data rmsqt1/0d0/,tm,tmsg/2*0d0/,snowdepth/0d0/
-      data dzinc/.04d0/,de0/0.9d-4/,albsnow/0.78d0/,emsnow/0.98d0/ ! ARK_2025/09/28 changed emsnow to 0.99 from 0.98
+      data dzinc/.04d0/,de0/0.9d-4/,albsnow/0.78d0/,emsnow/0.99d0/ ! ARK_2025/09/11 changed emsnow to 0.99 from 0.97
 cREJ 8/5/24      data rw/461.296d0/,a1snow/100D0/,dzmin/2d-3/,ci0/2117d0/
       data rw/461.296d0/,a1snow/400d0/,dzmin/2d-3/,ci0/2117d0/ !REJ_2025/08/31
       data ssisnow/0.04d0/,thkair/2.30d-2/
@@ -171,7 +170,7 @@ c_______________________________________________________________________
 c Debug input feature.  Comment-out if not used
       debug = .false.; idebug_step = 0 
          
-      
+
 c NEW INPUTS THAT NEED TO BE INTEGRATED INTO INPUT FILE ARK_2025/11/1     
       ! Read in Cosine of Zenith Angle or set to fixed value ARK 7/26/24
       mu_not  = 1d0    ! ARK 12/27/24
@@ -192,9 +191,8 @@ c     REJ Note: ICVPfixd replaces Khuller
       data ICVPfixd/.false./,Neumann/.false./,prnt_hour/.false./
      &    !REJ_2025/08/05 ICVPfixd = .F. !2025/04/12 Chng fixd back
       data fullnode/.false./ !11/07/23 Was triggering dt = dtmin ??
-
-      data usemeasuredbottomtemp/.true./ ! ARK_2025/10/1
-      
+      data usemeasuredbottomtemp /.true./ !ARK_2025/10/06
+      snow_dz_min = 1d-4 ! ARK_2025/09/11
       snow_threshold = 9.25d-6  ! ARK_2025/09/11 
 
 c         Recheck!
@@ -206,14 +204,14 @@ c*m*m*m*m*m*m*m*m*m* MatLabSolar_Data *m*m*m*m*m*m*m*m*m*m*m*m*mm*m*m*
 
 c*m*m*m*m*m*m*m*m*m* MatLabSolar_Data *m*m*m*m*m*m*m*m*m*m*m*m*mm*m*m*
 cREJ_2025/01/10      data do_Mie/.true./,spinup/.false./ cf
-      data do_Mie/.true./,spinup/.false./  !REJ_2025/02/13  Change spinup back
+      data do_Mie/.true./,spinup/.false./  !REJ_2025/02/13 Change
 cREJ_2025/01/10      data do_Mie/.false./,spinup/.false./ !
       data solartest/.false./,MLS_run_once/.false./  !REJ_2025/04/29
 c      data writematlabflag/.true./,writefluxmatlabflag/.true./ ! ARK 12/19/24
 c      data writematlablastyearflag/.true./ ! ARK 12/19/24
       data writematlabflag/.true./,writefluxmatlabflag/.true./ ! ARK 7/29/24 ./,REJ_2025/02/26
       data writematlablastyearflag/.false./ ! ARK 12/19/24,REJ_2025/02/26
-c*tt*tt*tt*tt*tt*tt*tt*tt*TURBULENCE SWITCH*tt*tt*tt*tt*tt*tt*tt*tt*tt*
+c*tt*tt*tt*tt*tt*tt*tt*tt*TURBULANCE SWITCH*tt*tt*tt*tt*tt*tt*tt*tt*tt*
        data USEKCTURB/.true./ ! true = Use KCTURB, false = Use QTURB
 c     &    !ARK ~2025/11/1
 c      data USEKCTURB/.false./ ! true = Use KCTURB, false = Use QTURB 
@@ -230,7 +228,7 @@ c                             ICVP = Inherent Control Volume Properties
       else
         if(.not.ICVPfixd)stop 'Use Fixed ICVPs for spinup'
         if(.not. Neumann)stop 'Use flux bottom BC for spinup'
-        spyear=6  !For large spyear, limit optional printouts  !REJ_2025/01/25 Chgd from 20
+        spyear=5  !For large spyear, limit optional printouts  !REJ_2025/01/25 Chgd from 20
 c        if(do_Mie .and. spyear .gt. 12) stop 'increase spyear with care'
       endif
 
@@ -268,7 +266,7 @@ c  Check for repeat of file names
       Endif
       open(90,file=fnm(1),status='old')       !Input file (getinput.f)
       open(88,file=fnm(2),status='old')       !Met file (getmet.f)
-      if(usemeasuredbottomtemp) open(89,file=fnm(3),status='old')       !Opt Measured Temperature ! ARK_2025/09/30
+c     open(89,file=fnm(3),status='old')       !Opt Measured Temperature
       open(80,file=fnm(4),status='unknown')   !Main output file
       open(7, file=fnm(5),status='unknown')   !Opt flux file (flux.f)
       open(99,file=fnm(6),status='unknown')   !Opt filtrate file (filt.out)
@@ -432,8 +430,6 @@ c           grain diameter data.
           CALL es_sub_new(eso,volatile,to(n)) 
           eso = eso/100d0 ! convert Pa to mbar
       end if
-      n_original = n  ! ARK_2025/09/26
-      
       
       es=eso
       ct(1)=((cl*flo(1)+ci(1)*(1.-flo(1)))*bwo(1)+bdcd(k(1)))/bt(1)
@@ -478,9 +474,6 @@ c     & ibasestep,ido,iptype,ircalc,itimezone,ititle,itm,new_sno, !REJ_2025/06/1
 c    REJ_2025/07/31 Tprecip set to wetbulb T in GETMET. Passed thru common
 c    REJ_2025/08/19 Boosting precip for Summit moved to GETMET
 
-c Use measured bottom temperature	           
-      if(usemeasuredbottomtemp) to(1) =tmsg ! ARK_2025/10/1
-      
       ! Calculate cosine of solar zenith angle ! ARK 12/27/24
 c         call zenith(mu_not,dlatt,azslope,century,ihour,iy,jday,planet,
 c     & elev)
@@ -488,13 +481,8 @@ c     & elev)
 c       REJ_2025  Somewhere before this I declared dsnowfall as 1d-3.
 c       I need to find this and locate it. But until then declare:
          dsnowfall = 120d-6 ! Fresh snow diameter ARK_2025/09/11
+         if(usemeasuredbottomtemp) To(1) =tmsg ! ARK_2025/10/06
 
-      if (ICVPfixd .and. n .ne. n_original) then
-          write(*,*) 'The number of nodes has changed to',n ,
-     &     'from',n_original
-      stop ! ARK_2025/09/26
-      endif
-      
 c         istart_eff = 0 ! ARK_2025/09/11
 c***********************************************************************
 c
@@ -515,7 +503,7 @@ cREJ      if(imin .le. 0)call subtime(repeat)  !12/26/24. This caused a problem 
       time = dfloat((jday-1)*24) + dfloat(ihour) + (dt/3600d0) 
      &  + dfloat(imin)/60d0- time0
 
-C       write(*,*)'MAIN',iy,jday,ihour,imin,dt,icalcstep,prcp ! ARK_2025/09/16
+c        write(*,*)'MAIN',iy,jday,ihour,imin,dt,icalcstep,prcp ! ARK_2025/09/16
 
       if (icalcstep .eq. 1) then 
             prev_iy = iy ! store first year ! ARK_2025/09/16
@@ -542,8 +530,6 @@ c     do 261 iar=1,niarray
 c     write(7,*)(iarray(i,iar),i=1,n)
 c261   continue
 c      rewind 7
-      
-      
 c***********************************************************************
       if(istart .ne. 1)snow_age(n) = snow_age(n) + dt/3600d0
 c      write(115,*)'MAIN 6b snow_age(n)',snow_age(n)
@@ -704,9 +690,9 @@ c        if(istart .eq. 1)do_Mie = .false.  !REJ_2025/06/27 Use simpler form for
 c*m*m*m*m*m*m*m*m*m*m*m*m*m*m* START *m*m*m*m*m*m*m*m*m*m*m*m*m*m*m*m*m  
 
          If(.not. MLS_run_once .or. .not. ICVPfixd)Then  
-           
-           if(ICVPfixd) MLS_run_once = .true.  ! ARK_2025/09/28
-c            MLS_run_once = .false. !REJ_2025/05/07 Forces execution of Mie routine for all timesteps ! ARK_2025/09/28
+            MLS_run_once = .true.  
+            MLS_run_once = .false. !REJ_2025/05/07 Forces execution of
+c                                   Mie routine for all timesteps
 
 c          Calculate optical properties for each layer from Mie Theory.
 c          Wavelenth loop is within the subroutine.
@@ -856,14 +842,14 @@ c    &   ! was sbt3
      &   -heatfluxbtop)/(dum-topfluxv) 
 c-----------------------------------------------------------------------
 c optional testing 
-C        if(icalcstep .ge.999999)then ! precip starts at 560
-C          write(120,*)'step topo,top,compute',topfluxo,topflux,
-C    &     topfluxv*Tsurfest,topfluxk,topfluxv,Tsurfest,
-C    &    'tprecip',tprecip,'convect',convect,'us',us(n),
-C    &    'convect*Tprecip',convect*(Tprecip-to(n))
-Cc           if(dabs(topfluxk+topfluxv*Tsurfest-topflux).gt. 8d0)
-Cc     &      stop 'topflux error'  !REJ Reinstate this later
-C        endif
+         if(icalcstep .ge.999999)then ! precip starts at 560
+           write(120,*)'step topo,top,compute',topfluxo,topflux,
+     &     topfluxv*Tsurfest,topfluxk,topfluxv,Tsurfest,
+     &    'tprecip',tprecip,'convect',convect,'us',us(n),
+     &    'convect*Tprecip',convect*(Tprecip-to(n))
+c           if(dabs(topfluxk+topfluxv*Tsurfest-topflux).gt. 8d0)
+c     &      stop 'topflux error'  !REJ Reinstate this later
+         endif
 c-----------------------------------------------------------------------
 c        Limit temperature change to 5 degree/hour.
 
@@ -1121,8 +1107,8 @@ c  Skip if a new node has been initialized during this iteration.
 c  Snowcover/soil elements are grouped into nzone blocks where there
 c  is contiguous water flow.  Block limits are designated in routine
 c  NLIMIT.
-c      goto 1111  !skipped infiltarion for now ! ARK_2025/09/18
-      IF(.not. ICVPfixd)THEN !10/30/23  RJ ! ARK_2025/09/29
+c      goto 1111  !skipped infiltration for now ! ARK_2025/09/18
+       IF(.not. ICVPfixd)THEN !10/30/23  RJ
        call nlimit(ibounds,nzone)
        if(nzone .gt. 0)then
         do 65 i=1,nzone
@@ -1214,17 +1200,16 @@ c      write(115,*)'MAIN 13.jday,ihour,imin,icalstep,dt',
 c     &  jday,ihour,imin,icalcstep,dt
 
       if(.not.ICVPfixd .or. prcp .gt. 0d0)
-
      & Call massbal(icalcstep,ICVPfixd,dtmin,dzmin,bwfall,sum_vapor_dt,
      &  Totaltime,sum_delta_dz,thinnode)!REJ_2025/07/22 & 24 & 08/27
      
 
-          if(ICVPfixd .and. dabs(unbar(n)) .gt.  1d-10)then ! REJ_2025/10/6
+          if(icvpfixd .and. dabs(unbar(n)) .gt.  1d-10)then
             write(*,*)'UNBAR:STEP',unbar(n),jday,ihour,icalcstep
             stop 'MAIN: Section 13'
           endif
 
-c          Totalmass = Totalmass -uvapor(42)*dt   !REJ testing: remove later ! ARK_2025/09/27
+          Totalmass = Totalmass -uvapor(42)*dt   !REJ testing: remove later
 
 c      Set a minimum mass
           thinnode = .false.  !REJ_2025/08/30
@@ -1329,20 +1314,6 @@ c**********************************************************************
        if(debug .and. icalcstep .ge. idebug_step)
      & write(*,*)icalcstep,'16. VARIABLE = ',TOPFLUXV
 c***********************************************************************
-      do i = 1, n ! ARK_2025/10/1
-          if (dz(i) .le. 0d0 .or. bw(i) .le. 0d0 .or. dmass(i) .le. 0d0)    
-     & then
-          write(*,*) 'Uh-Oh'
-          end if
-      enddo
-      
-      if (t(n-1) .lt. 200d0 .or. t(n-1) .gt. 400d0) then ! ARK_2025/10/1
-      write(*,*) 'Thermal input out of range at step ', icalcstep, 
-     &        ' t(n-1)=', t(n-1), ' bw(n)=', bw(n), ' dz(n)=', dz(n), 
-     &        ' dmass(n)=', dmass(n), ' unbar(n)=', unbar(n), 
-     &        ' uvapor(n)=', uvapor(n)
-  
-      endif
       call thermal(dtmin,dzmin,recross,*1001,errtallowd,Neumann,
      &     357,18,prnt_hour,icalcstep,120,thinnode,TsurfEst)!10/22/2023 RJ12/17!REJ_2025/08/11
 c      write(*,*)'bw(n) aft thermal',icalcstep,bw(n),ci(n),dz(n),bb(n)
@@ -1412,9 +1383,9 @@ c  Out for now  if(n .le. nsoil)convect=convect+cl*u(n+1)*t(n)!REJ6/23 Rethink t
 cREJ_2025/09/08 topflux=(dlong+sensheat+dlatheat+convect*(Tprecip-T(n)))/2d0 !REJ_2025/08/17
       topflux=(dlong+sensheat+dlatheat+convect*(Tprecip-To(n)))/2d0 !REJ_2025/09/08
      &    !REJ_2025/09/09
-C     if(icalcstep .ge. istep_conv_out)
-C    &   write(120,*)'3 bef FBB: topflux & Est',
-C    &                       topflux,topfluxk +topfluxv*T(n)!REJ_2025/09/04                   
+      if(icalcstep .ge. istep_conv_out)
+     &   write(120,*)'3 bef FBB: topflux & Est',
+     &                       topflux,topfluxk +topfluxv*T(n)!REJ_2025/09/04                   
 c      write(*,*)' bef FBB',icalcstep,bw(n),ci(n),dz(n),bb(n)
 c-----------------------------------------------------------------------------
 c OK to delete this block 
@@ -1531,19 +1502,16 @@ c**********************************************************************
 C***********************************************************************
 c
 c  After precip has stopped, divide thick snow or ponded water elemnts
-c     if((prcp .le.0d0.and.(dzo(n).gt.dzn .or. dzo(n-1) .gt. dznm)))then
       if((prcp .le.0d0.and.(dzo(n).gt.dzn .or. dzo(n-1) .gt. dznm)))then
         nold=n
 c April 4, 1995      call subdivide(dzn,dznm,a1snow,dzinc)
 c    NOTE: Several debug lines removed here  RJ12/17
-      if (.not. (ICVPfixd .and. spinup))  ! ARK_2025/10/7
-     & call subdivide(dzn,dznm,a1snow,dzinc,floo,45,icalcstep)
-          !REJ_2025/08/20  dt=1d0
+        call subdivide(dzn,dznm,a1snow,dzinc,floo,45,icalcstep)
+     &     !REJ_2025/08/20  dt=1d0
 CR           if(icalcstep .gt. 8000)stop 'MAIN after combo'
       end if
 c Unless it is snowing or water is ponding on top, combine thin elements 
-      if (.not. (ICVPfixd .and. spinup))  ! ARK_2025/10/7
-     & call combinenodes(dzmin,a1snow,thsnow,tlsnow,ssisnow,icalcstep,
+      call combinenodes(dzmin,a1snow,thsnow,tlsnow,ssisnow,icalcstep,
 cREJ_2025/08/20     &140) !REJ_2025/08/04 Added iunit 140
      &45) !REJ_2025/08/04 Added iunit 140
 c      if(icalcstep .gt. 100000)stop 'MAIN after combo' ! ARK_2025/09/10
@@ -1657,11 +1625,9 @@ c     Generate names for spin-up output files
 
 c REJ Block to write short spin-up output files
         if(ICVPfixd)then ! 10/22/23 RJ Write final data to short output 
-          write(*,*) 'Nodes = ',n ! ARK_2025/09/26
           open(92, file = spfilename ,status='unknown')
           write(92,*)
      &   'Node   Depth(m)   Temp(K)   dz(m) Density(kg/m3) Diameter(m)'
-     
           do 700 i = 1,n         
              write(92,55)i,depth(i),t(i),dz(i),bw(i),d(i)
 55           format(i4,4F11.3,F11.6) 
@@ -1669,7 +1635,7 @@ c REJ Block to write short spin-up output files
           rewind(92)
         EndIf
 
-         close (90); close(80); close(88); 
+         close (90); close(80); close(88)
 
 c    Next for initializing between years during spinup
          n=0;ibasestep=0;igood=0;ititle=0        !REJ 12/29/23

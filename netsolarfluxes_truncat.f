@@ -188,7 +188,7 @@ c      tdr = 0d0 ! ARK_2025/2/14
 c      tautot = 0d0 
 
 c  check input
-      check = .false. ! ARK_2025/09/10
+c      check = .true.
       if(check)then
       write(34,*)'fl_r_dif_a'; write(34,10)fl_r_dif_a  !REJ test
       write(34,*)'fl_r_dif_b'; write(34,10)fl_r_dif_b  !REJ test
@@ -677,8 +677,8 @@ C
 
 321   continue ! iw; number of wavelengths
 
-c       write(34,*)' END Radiative Solver Adding Doubling Method' ! ARK_2025/09/10
-c       write(34,*)'  iw   k     fdirup       fdifup      fdirdn  fdifdn' ! ARK_2025/09/10
+       write(34,*)' END Radiative Solver Adding Doubling Method'
+       write(34,*)'  iw   k     fdirup       fdifup      fdirdn  fdifdn'
 
       ! Fluxes at interfaces
 

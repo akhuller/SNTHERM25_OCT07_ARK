@@ -13,8 +13,6 @@ c***********************************************************************
 c     &   repeat,ssisnow,blfall,fullnode,a1snow) REJ_2025/05/28
      &   repeat,ssisnow,blfall,fullnode,a1snow,
      &  thinnode)!REJ_2025/08/31 
-     
-
 c IMPORT ANT. THIS ROUTINE WAS REVISED IN NOV, 1995 TO ACCEPT
 c SWE RATHER THAN SNOW ACCUMULATION AS THE PRECIP RATE.
 c
@@ -146,7 +144,7 @@ cremove       Note that the new node is initialized with 0. bulk density and is
 cremove       augmented by an amount u or us in sec. 13.
 c        REJ_2025/05/25. Folowing block rewritten.  Partially based on newsnow
 c        from SNTHERMP_2013
-         to(n)=tprecip ! ARK_2025/10/7 to match OCT_07_ARK file
+         to(n)=tprecip
          bwo(n)=bwfall
          bbo(n)=0d0
          bifall=bwfall-blfall

@@ -23,15 +23,15 @@ c
       double precision g1,g2,ufvapor,do,dliqvol,dt
 c
       if(do .le. 0d0)stop 'Execution halted in FGRAIN because do =< 0'
-      if(dliqvol .lt.1d-4)then ! dry snow
-c     Note: Cut-off between dry and wet snow arbitrarily set at 0.0001
+      if(dliqvol .lt.1d-4)then
+c     Note: Cut-off bewtn dry and wet snow arbitrarily set at 0.0001
         if(dabs(ufvapor) .lt. 1.0d-6)then
 c       Note: Max vapor flux available for growth arbitrarily set at 1d-6
           fgrain=do+dt*g1*dabs(ufvapor)/do
         else
           fgrain=do+g1*dt *1.0d-6/do
         endif
-      else ! wet snow
+      else
         if(dliqvol .lt. 0.09)then 
           fgrain=do+g2*dt*(dliqvol+0.05d0)/do        
         else
