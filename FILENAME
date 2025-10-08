@@ -1,0 +1,123 @@
+'DYE2_Samimi_2021.in'
+'MET_DYE2_Samimi_2021.in'
+'T_obs_DYE2_Samimi_2021.in'
+'DYE2_Samimi_2021.out'
+'DYE2_Samimi_2021.flux'
+'DYE2_Samimi_2021.filt'
+-------------------------------------Above DYE-2 Firn Case: Samimi et al. (2021) 
+'MatLabSolartest_bi_v2.in'
+'hourly_liston_met_1994_1995_blend_start_july.in'
+'undist2'
+'MLSolar_bi.out'
+'MLSolar_bi.flux'
+'MLSolar_bi.filt'
+-------------------------------------Above OCT 7 Dronning Maud Blue Ice Case: Liston et al. (1999) 
+'v2_MatLabSolartest_bi.in'
+'dbg_hourly_liston_met_1994_1995_blend_start_july.in'
+'undist2'
+'dbg_MLSolar_bi.out'
+'dbg_MLSolar_bi.flux'
+'dbg_MLSolar_bi.filt'
+-------------------------------------Above DEBUG Dronning Maud Blue Ice Case: Liston et al. (1999) 
+'MatLabSolartest_2.in'
+'hourly_liston_met_1994_1995_blend_start_july.in'
+'undist2'
+'MLSolar_Snow_2.out'
+'MLSolar_Snow_2.flux'
+'MLSolar_Snow_2.filt'
+-------------------------------------Above Dronning Maud Snow Case: Liston et al. (1999)
+'MatLabSolartest_bi.in'
+'hourly_liston_met_1994_1995_blend_start_july.in'
+'undist2'
+'MLSolar_bi.out'
+'MLSolar_bi.flux'
+'MLSolar_bi.filt'
+-------------------------------------Above Dronning Maud Blue Ice Case: Liston et al. (1999) 
+'Summit_Cullen_2014.in'
+'MET_Summit_Cullen_2014.in'
+'undist2'
+'Summit_Cullen_2014.out'
+'Summit_Cullen_2014.flux'
+'Summit_Cullen_2014.filt'
+-------------------------------------Above Summit Greenland Case: Cullen et al. (2014)
+'V5_Summit_KM09.in'
+'V3_MET_KM_09.in'
+'undist2'
+'Summit_KM09.out'
+'Summit_KM09.flux'
+'Summit_KM09.filt'
+-------------------------------------Above Summit Greenland Case: Kuipers Munneke et al. (2009)
+'MatLabSolartest_2.in'   
+'hourly_liston_met_1994_1995_blend_start_July.in'
+'undist2'
+'MLSolar_Snow_2_REJ.out'
+'MLSolar_Snow_2_REJ.flux'
+'MLSolar_Snow_2_REJ.filt'
+-------------------Above reg SNTHERM: ARK Snow input files ~Jan 10, 2025
+'MLSolar_Snow4.in'    
+'hourly_liston_met_1994_1995_July1.in'
+'undist2'
+'MLSolar_Snow4.out'
+'MLSolar_Snow.flux'
+'MLSolar_Snow.filt'
+-------------------Above reg SNTHERM: Snow with 42 CVs. 0.03 cm at bottom
+'MLSolar_Snow2.in'
+'hourly_liston_met_1994_1995_July1.in'
+'undist2'
+'MLSolar_Snow2.out'
+'MLSolar_Snow.flux'
+'MLSolar_Snow.filt'
+-------------------------------------Above reg SNTHERM:Snow
+'MatLabSolar_solartest_snow2.in'   
+'liston_hourly_met_1994.in'
+'undist2'
+'MatLabSolar_solartest_snow.out'
+'MatLabSolar_solartest_snow.flux'
+'MatLabSolar_solartest_snow.filt'
+-------------------------------------Above solartest
+'MLSolar_Snow.in'
+'liston_hourly_met_1994_jUly1.in'
+'undist2'
+'MLSolar_Snow.out'
+'MLSolar_Snow.flux'
+'MLSolar_Snow.filt'
+-------------------------------------Above reg SNTHERM:Snow
+'MatLabSolar_solartest_snow.in'   
+'liston_hourly_met_1994.in'
+'undist2'
+'MatLabSolar_solartest_snow.out'
+'MatLabSolar_solartest_snow.flux'
+'MatLabSolar_solartest_snow.filt'
+-------------------------------------Above solartest
+'MatLabSolar.in'
+'liston_hourly_met_1994_jUly1.in'
+'undist2'
+'MLSolar_BlueIce.out'
+'MLSolar_BlueIce.flux'
+'MLSolar_BlueIce.filt'
+-------------------------------------Above reg SNTHERM:BlueIce
+'MatLabSolar_solartest_blueice.in'   
+'liston_hourly_met_1994.in'
+'undist2'
+'MatLabSolar_.out'
+'MatLabSolar.flux'
+'MatLabSolar.filt'
+-------------------------------------Above solartest
+Note: Snow fails in both solartest and sntherm versions
+'MLSolar_Snow.in'
+'liston_hourly_met_1994_jUly1.in'
+'undist2'
+'MLSolar_Snow.out'
+'MLSolar_Snow.flux'
+'MLSolar_Snow.filt'
+-------------------------------------Above reg SNTHERM:Snow
+c
+Following are file descriptions
+        General parameters and initial nodal values
+        Meteorological data
+        Optional files of measured surface temperatures
+        General output file
+        Optional output file of surface fluxes
+        Optional output file of infiltration /daily flux summ. Don't use
+        Water content pfofiles: for Rachel's use only 
+        Output temperature profiles:  ditto

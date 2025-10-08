@@ -1,0 +1,20 @@
+c***********************************************************************
+c ARRAYS_spectral is an INCLUDED common block containing spectral
+c variables used in subroutines opt_properties.f and netsolarfluxes.f.
+c Values are read within sntherm.f(MAIN)
+c***********************************************************************
+c
+      integer narray_spectral  !REJ 7/5/24 
+c      parameter (narray_spectral = 7)  !REJ_2025/02/27
+      parameter (narray_spectral = 10)
+      double precision lambda(nbr_wvl),g_data(nbr_wvl),mImag(nbr_wvl),
+     & n_ice(nbr_wvl),FL_r_dif_a(nbr_wvl),FL_r_dif_b(nbr_wvl),
+     & Fd0(nbr_wvl),Fd(nbr_wvl),Fs0(nbr_wvl),Fs(nbr_wvl)
+
+      common /arrays_spectral/ lambda,g_data,mImag,n_ice, 
+     &FL_r_dif_a,FL_r_dif_b,Fd,Fd0,Fs,Fs0   !REJ August, 2024 
+c    REJ_2025/03/15 renamed common/array_MatLabSolar/. Changed back to  
+c   /arrays_spectral on 2025/04/24
+
+
+

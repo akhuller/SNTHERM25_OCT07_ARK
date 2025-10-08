@@ -1,0 +1,42 @@
+c***********************************************************************
+c  CONST stores constants used in model. Include this file in front of
+c  all common block includes.
+c  REJ_2025/09/24.  Note addition of iarray1size & iarray1size below.
+c  CHANGE SIZES if either nd or num_prop change in an array block within
+c  routine 'arrays'
+c  We need to fill in defintions for all of these parameters
+c***********************************************************************
+c
+      integer nd,ld,np,nfiles,numsoiltype,rbad,nbr_wvl !4/26/24
+      integer iarray1size, iarray2size
+      integer nwl,ncv, nif  !6/19/24
+      double precision dtol1,dtol2,dtol3
+      parameter (dtol1 = 1.0d-12, dtol2 = 1.0d-07,dtol3= 1.0d-05)
+
+c integer constants used to dimension common block arrays in the
+c files 'arrays' and 'init.f'
+
+c     nd is the maximum allowable interfaces in the grid
+
+      parameter (nd=200)
+
+c     num_prop is the number of properties associated with a CV or inter-
+c     face, up to a arbitrary limit of 30 within a block, as set in  
+c     routine 'arrays'. iarraysize is therefore num_prop*nd.
+c     iarraysize is therefore num_prop*nd.
+
+      parameter (iarray1size = 6000)  !REJ_2025/09/24
+      parameter (iarray2size = 5800)  !REJ_2025/09/24  
+c
+      parameter (ld=5) ! Number of layer types
+      parameter (np=2,nfiles=6,numsoiltype=99,rbad=999)
+
+c Next for MatLabSolar 4/26/24 and 6/19/24
+      parameter (nbr_wvl = 281)  !Number of wavelength intervals
+      parameter (nwl = 281)
+
+cREJ_2025/09/24      parameter (ncv = 110)  ! greater than input n to allow for snowfall
+cREJ_2025/09/24      parameter (nif = 111)
+      parameter (ncv = 199)   !REJ_2025/09/24  ! number of CVs in grid
+      parameter (nif = 200)   !REJ_2025/09/24  ! number of interfaces in grid
+

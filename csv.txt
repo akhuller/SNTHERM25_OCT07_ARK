@@ -1,0 +1,53 @@
+c These files can be read in SNTHERM, outside the loops in the beginning			
+      ! Open the wavelength file
+      open (10,file= 'Wavelengths.csv', status='old')
+      ! Read each line from the file
+      read (10,*) (lambda(i),i=1,nbr_wvl)
+      ! Close the file
+      close(10)
+
+      ! Open the bubble asymmetry parameter file
+      open (11,file= 'g_bubble.csv', status='old')
+    ! Read each line from the file
+      read (11,*) (g_data(i),i=1,nbr_wvl)
+    ! Close the file
+      close(11)
+
+
+      ! Open the ice refractive index (imaginary part) file
+      open (12,file= 'm_ice_WBP.csv', status='old')
+      ! Read each line from the file
+      read (12,*) (mImag(i),i=1,nbr_wvl)
+       ! Close the file
+      close(12)
+
+      ! Open the ice refractive index (real part) file
+      open (13,file= 'n_ice_WBP.csv', status='old')
+      ! Read each line from the file
+      read (13,*) (n_ice(i),i=1,nbr_wvl)
+       ! Close the file
+      close(13)
+
+      ! Open pre-calculated Fresnel diffuse reflection file A
+      open (14,file= 'FL_r_dif_a_WBP.csv', status='old')
+      ! Read each line from the file
+      read (14,*) (FL_r_dif_a(i),i=1,nbr_wvl)
+       ! Close the file
+      close(14)
+
+
+      ! Open pre-calculated Fresnel diffuse reflection file B
+      open (15,file= 'FL_r_dif_b_WBP.csv', status='old')
+      ! Read each line from the file
+      read (15,*) (FL_r_dif_b(i),i=1,nbr_wvl)
+       ! Close the file
+      close(15)
+
+      ! Open Liston's Figure 4 normalized spectrum 
+      open (16,file= 'v3_Liston_Fd.csv', status='old') 
+      ! REJ question. Are units here nanometer-1??
+      ! Read each line from the file
+c      read (16,*) (Fd0(i),i=1,nbr_wvl) !REJ 4/26/24 Chged from Fd
+      read (16,*) (Fs0(i),i=1,nbr_wvl) ! ARK 7/26/24 Changed to Fs0
+       ! Close the file
+      close(16)

@@ -1,0 +1,21 @@
+c***********************************************************************
+c  CONST stores constants used in model. Include this file in front of
+c  all common block includes.
+c***********************************************************************
+c
+      integer nd,ld,np,nfiles,numsoiltype,rbad,nbr_wvl !4/26/24
+      integer nwl,ncv, nif  !6/19/24
+      double precision dtol1,dtol2,dtol3
+      parameter (dtol1 = 1.0d-12, dtol2 = 1.0d-07,dtol3= 1.0d-05)
+c integer constants used to dimension common block arrays 
+c      parameter (nd=200)
+       parameter (nd=100)
+c8/6/24      parameter (nd=260)
+c      parameter (nd=260)
+      parameter (ld=5)
+      parameter (np=2,nfiles=6,numsoiltype=99,rbad=999)
+c Next for MatLabSolar 4/26/24 and 6/19/24
+      parameter (nbr_wvl = 281)
+      parameter (nwl = 281)
+      parameter (ncv = 90)  ! greater than input n to allow for snowfall
+      parameter (nif = 91)
